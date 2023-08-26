@@ -14,11 +14,6 @@ node {
             
         }
     }
-    post {
-        always {
-            junit 'test-reports/results.xml'
-        }
-    }
     // docker.image('cdrx/pyinstaller-linux:python2').inside('-p 3000:3000'){
     //     stage('Deliver') {
     //         checkout scm
