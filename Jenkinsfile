@@ -41,7 +41,8 @@ node {
         withEnv(["VOLUME=${pwd}/sources:/src", "IMAGE=cdrx/pyinstaller-linux:python2"]) {
             stage('Deliver') {
                 dir(path: env.BUILD_ID) { 
-                    unstash(name: 'compiled-results') 
+                    // unstash(name: 'compiled-results') 
+                    checkout scm
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
                 }
                 // docker.image('cdrx/pyinstaller-linux:python2').inside {
