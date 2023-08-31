@@ -66,8 +66,8 @@ node {
     } finally {
         def currentResult = currentBuild.result ?: 'SUCCESS'
         if (currentResult == 'SUCCESS') {
-            archiveArtifacts "sources/dist/add2vals"
-            sh "docker run --rm -v ${env.VOLUME} ${env.IMAGE} 'rm -rf build dist'"
+            archiveArtifacts "${env.BUILD_ID}/sources/dist/add2vals" 
+            sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
         }
 
         // def previousResult = currentBuild.previousBuild?.result
@@ -80,109 +80,109 @@ node {
     }
 }
 
-pipeline {
+// pipeline {
 
-    agent none
+//     agent none
 
-    options {
+//     options {
 
-        skipStagesAfterUnstable()
+//         skipStagesAfterUnstable()
 
-    }
+//     }
 
-    stages {
+//     stages {
 
-        stage('Build') {
+//         stage('Build') {
 
-            agent {
+//             agent {
 
-                docker {
+//                 docker {
 
-                    image 'python:2-alpine'
+//                     image 'python:2-alpine'
 
-                }
+//                 }
 
-            }
+//             }
 
-            steps {
+//             steps {
 
-                sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+//                 sh 'python -m py_compile sources/add2vals.py sources/calc.py'
 
-                stash(name: 'compiled-results', includes: 'sources/*.py*')
+//                 stash(name: 'compiled-results', includes: 'sources/*.py*')
 
-            }
+//             }
 
-        }
+//         }
 
-        stage('Test') {
+//         stage('Test') {
 
-            agent {
+//             agent {
 
-                docker {
+//                 docker {
 
-                    image 'qnib/pytest'
+//                     image 'qnib/pytest'
 
-                }
+//                 }
 
-            }
+//             }
 
-            steps {
+//             steps {
 
-                sh 'py.test --junit-xml test-reports/results.xml sources/test_calc.py'
+//                 sh 'py.test --junit-xml test-reports/results.xml sources/test_calc.py'
 
-            }
+//             }
 
-            post {
+//             post {
 
-                always {
+//                 always {
 
-                    junit 'test-reports/results.xml'
+//                     junit 'test-reports/results.xml'
 
-                }
+//                 }
 
-            }
+//             }
 
-        }
+//         }
 
-        stage('Deliver') { 
+//         stage('Deliver') { 
 
-            agent any
+//             agent any
 
-            environment { 
+//             environment { 
 
-                VOLUME = '$(pwd)/sources:/src'
+//                 VOLUME = '$(pwd)/sources:/src'
 
-                IMAGE = 'cdrx/pyinstaller-linux:python2'
+//                 IMAGE = 'cdrx/pyinstaller-linux:python2'
 
-            }
+//             }
 
-            steps {
+//             steps {
 
-                dir(path: env.BUILD_ID) { 
+//                 dir(path: env.BUILD_ID) { 
 
-                    unstash(name: 'compiled-results') 
+//                     unstash(name: 'compiled-results') 
 
-                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
+//                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
 
-                }
+//                 }
 
-            }
+//             }
 
-            post {
+//             post {
 
-                success {
+//                 success {
 
-                    archiveArtifacts "${env.BUILD_ID}/sources/dist/add2vals" 
+//                     archiveArtifacts "${env.BUILD_ID}/sources/dist/add2vals" 
 
-                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
+//                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
 
-                }
+//                 }
 
-            }
+//             }
 
-        }
+//         }
 
-    }
+//     }
 
-}
+// }
 
