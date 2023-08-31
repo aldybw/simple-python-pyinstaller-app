@@ -50,7 +50,7 @@ node {
     } finally {
         def currentResult = currentBuild.result ?: 'SUCCESS'
         if (currentResult == 'SUCCESS') {
-            archiveArtifacts 'dist/add2vals/*'
+            archiveArtifacts 'dist/add2vals.zip'
         }
 
         def previousResult = currentBuild.previousBuild?.result
