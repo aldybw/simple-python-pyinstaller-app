@@ -1,16 +1,28 @@
 node {
-    stage('Build') {
-        docker.image('python:2-alpine').inside {
-            checkout scm
-            sh 'python -m py_compile sources/add2vals.py sources/calc.py'
-        }
-    }
+    // stage('Build') {
+    //     docker.image('python:2-alpine').inside {
+    //         checkout scm
+    //         sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+    //     }
+    // }
 
     try {
+        stage('Build') {
+            docker.image('python:2-alpine').inside {
+                checkout scm
+                sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+            }
+        }
         stage('Test') {
             docker.image('qnib/pytest').inside {
                 checkout scm
                 sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
+            }
+        }
+        stage('Deliver') {
+            docker.image('cdrx/pyinstaller-linux:python2').inside {
+                checkout scm
+                sh 'pyinstaller --onefile sources/add2vals.py'
             }
         }
     } catch (e) {
@@ -24,6 +36,9 @@ node {
         if (currentResult == 'ALWAYS') {
             junit 'test-reports/results.xml'
         }
+        if (currentResult == 'SUCCESS') {
+            archiveArtifacts 'dist/add2vals'
+        }
 
         // def previousResult = currentBuild.previousBuild?.result
         // if (previousResult != null && previousResult != currentResult) {
@@ -34,18 +49,18 @@ node {
         // echo 'This will always run'
     }
 
-    try {
-        stage('Deliver') {
-            docker.image('cdrx/pyinstaller-linux:python2').inside {
-                checkout scm
-                sh 'pyinstaller --onefile sources/add2vals.py'
-            }
-        }
-    } catch (e) {
-        // echo 'This will run only if failed'
+    // try {
+    //     stage('Deliver') {
+    //         docker.image('cdrx/pyinstaller-linux:python2').inside {
+    //             checkout scm
+    //             sh 'pyinstaller --onefile sources/add2vals.py'
+    //         }
+    //     }
+    // } catch (e) {
+    //     // echo 'This will run only if failed'
 
-        // Since we're catching the exception in order to report on it,
-        // we need to re-throw it, to ensure that the build is marked as failed
-        throw e
-    } 
+    //     // Since we're catching the exception in order to report on it,
+    //     // we need to re-throw it, to ensure that the build is marked as failed
+    //     throw e
+    // } 
 }
