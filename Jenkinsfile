@@ -32,13 +32,13 @@ node {
         // we need to re-throw it, to ensure that the build is marked as failed
         throw e
     } finally {
-        def currentResult = currentBuild.result ?: 'ALWAYS'
+        def currentResult = currentBuild.result ?: 'SUCCESS'
         if (currentResult == 'ALWAYS') {
             junit 'test-reports/results.xml'
         }
-        if (currentResult == 'SUCCESS') {
-            archiveArtifacts 'dist/add2vals'
-        }
+        // if (currentResult == 'SUCCESS') {
+        //     archiveArtifacts 'dist/add2vals'
+        // }
 
         // def previousResult = currentBuild.previousBuild?.result
         // if (previousResult != null && previousResult != currentResult) {
