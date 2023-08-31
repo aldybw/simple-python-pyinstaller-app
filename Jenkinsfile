@@ -53,7 +53,8 @@ node {
     } finally {
         def currentResult = currentBuild.result ?: 'SUCCESS'
         if (currentResult == 'SUCCESS') {
-            archiveArtifacts 'dist/add2vals'
+            archiveArtifacts "sources/dist/add2vals"
+            sh "docker run --rm -v ${env.VOLUME} ${env.IMAGE} 'rm -rf build dist'"
         }
 
         // def previousResult = currentBuild.previousBuild?.result
