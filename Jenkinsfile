@@ -51,7 +51,7 @@ node {
         // we need to re-throw it, to ensure that the build is marked as failed
         throw e
     } finally {
-        def currentResult = currentBuild.result ?: 'ALWAYS'
+        def currentResult = currentBuild.result ?: 'SUCCESS'
         if (currentResult == 'SUCCESS') {
             archiveArtifacts 'dist/add2vals'
         }
