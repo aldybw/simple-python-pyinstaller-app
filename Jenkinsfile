@@ -14,7 +14,7 @@ node {
             }
         }
     } catch (e) {
-        echo 'This will run only if failed'
+        // echo 'This will run only if failed'
 
         // Since we're catching the exception in order to report on it,
         // we need to re-throw it, to ensure that the build is marked as failed
@@ -42,7 +42,7 @@ node {
             }
         }
     } catch (e) {
-        echo 'This will run only if failed'
+        // echo 'This will run only if failed'
 
         // Since we're catching the exception in order to report on it,
         // we need to re-throw it, to ensure that the build is marked as failed
@@ -59,6 +59,6 @@ node {
         //     echo 'For example, if the Pipeline was previously failing but is now successful'
         // }
 
-        echo 'This will always run'
+        // echo 'This will always run'
     }
 }
