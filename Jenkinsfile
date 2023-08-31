@@ -1,8 +1,15 @@
 node {
+    properties(
+        [
+            skipStagesAfterUnstable()
+        ]
+    )
+
     stage('Build') {
         docker.image('python:2-alpine').inside {
-            checkout scm
+            // checkout scm
             sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+            stash(name: 'compiled-results', includes: 'sources/*.py*')
         }
     }
 
@@ -41,8 +48,8 @@ node {
         withEnv(["VOLUME=${pwd}/sources:/src", "IMAGE=cdrx/pyinstaller-linux:python2"]) {
             stage('Deliver') {
                 dir(path: env.BUILD_ID) { 
-                    // unstash(name: 'compiled-results') 
-                    checkout scm
+                    unstash(name: 'compiled-results') 
+                    // checkout scm
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
                 }
                 // docker.image('cdrx/pyinstaller-linux:python2').inside {
