@@ -1,6 +1,10 @@
 pipeline {
     agent none
-
+    environment {
+        PUBLIC_URL       = 'https://aldybw.github.io/simple-python-pyinstaller-app'
+        GITHUB_TOKEN     = credentials('jenkins-github-token')
+        GITHUB_REPOSITORY = 'aldybw/simple-python-pyinstaller-app'
+    }
     options {
         skipStagesAfterUnstable()
     }
@@ -49,6 +53,7 @@ pipeline {
                     // echo $VOLUME
                     unstash(name: 'compiled-results') 
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
+                    sh 'chmod +x ./jenkins/scripts/github-pages.sh && ./jenkins/scripts/github-pages.sh'
                 }
             }
 
