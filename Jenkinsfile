@@ -82,7 +82,7 @@ node {
     }
 
     if (currentBuild.currentResult == 'SUCCESS') { 
-        withEnv(["VOLUME=$(pwd)/sources:/src", 'IMAGE=cdrx/pyinstaller-linux:python2']) {
+        withEnv(["VOLUME=$pwd/sources:/src", 'IMAGE=cdrx/pyinstaller-linux:python2']) {
             stage('Deliver') {
                 dir(path: env.BUILD_ID) {
                     try {
