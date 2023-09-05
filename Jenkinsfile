@@ -87,8 +87,9 @@ node {
             dir(path: env.BUILD_ID) {
                 try {
                     docker.image('cdrx/pyinstaller-linux:python2').inside {
-                        echo $VOLUME
-                        unstash(name: 'compiled-results') 
+                        unstash(name: 'compiled-results')
+                        sh('echo ${VOLUME}') 
+                        sh('echo ${env.BUILD_ID}') 
                         sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'"
                     }
                 } finally {
