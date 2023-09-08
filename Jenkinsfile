@@ -109,32 +109,32 @@ node {
             sleep time: 1, unit: 'MINUTES'
             archiveArtifacts "${env.BUILD_ID}/sources/dist/add2vals"
             sh "docker run --rm -v ${env.WORKSPACE}/${env.BUILD_ID}/sources:/src cdrx/pyinstaller-linux:python2 'rm -rf build'"
-            // sshPublisher(
-            //     publishers: [
-            //         sshPublisherDesc(
-            //             configName: 'submission-cicd-pipeline-nafifurqon-ec2', 
-            //             transfers: [
-            //                 sshTransfer(
-            //                     cleanRemote: false,
-            //                     excludes: '',
-            //                     execCommand: "chmod a+x ${env.BUILD_ID}/sources/dist/add2vals && ./${env.BUILD_ID}/sources/dist/add2vals 10 20",
-            //                     execTimeout: 120000,
-            //                     flatten: false,
-            //                     makeEmptyDirs: false,
-            //                     noDefaultExcludes: false,
-            //                     patternSeparator: '[, ]+',
-            //                     remoteDirectory: '',
-            //                     remoteDirectorySDF: false,
-            //                     removePrefix: '',
-            //                     sourceFiles: "${env.BUILD_ID}/sources/dist/*"
-            //                 )
-            //             ],
-            //             usePromotionTimestamp: false,
-            //             useWorkspaceInPromotion: false,
-            //             verbose: false
-            //         )
-            //     ]
-            // )
+            sshPublisher(
+                publishers: [
+                    sshPublisherDesc(
+                        configName: 'deploy-app-ec2', 
+                        transfers: [
+                            sshTransfer(
+                                cleanRemote: false,
+                                excludes: '',
+                                execCommand: "chmod a+x ${env.BUILD_ID}/sources/dist/add2vals && ./${env.BUILD_ID}/sources/dist/add2vals 10 20",
+                                execTimeout: 120000,
+                                flatten: false,
+                                makeEmptyDirs: false,
+                                noDefaultExcludes: false,
+                                patternSeparator: '[, ]+',
+                                remoteDirectory: '',
+                                remoteDirectorySDF: false,
+                                removePrefix: '',
+                                sourceFiles: "${env.BUILD_ID}/sources/dist/*"
+                            )
+                        ],
+                        usePromotionTimestamp: false,
+                        useWorkspaceInPromotion: false,
+                        verbose: false
+                    )
+                ]
+            )
             // sleep(60)
         }
     }
