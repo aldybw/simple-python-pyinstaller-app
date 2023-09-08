@@ -91,15 +91,17 @@ node {
         }
     }
     
-    stage('Manual Approval') {
-        input message: 'Lanjutkan ke tahap Deploy?'
-    }
+    // stage('Manual Approval') {
+    //     input message: 'Lanjutkan ke tahap Deploy?'
+    // }
     
-    stage('Deploy') {
+    stage('Deliver') {
         dir("${env.BUILD_ID}") {
+            input message: 'Lanjutkan ke tahap Deploy? (Klik "Proceed" untuk melanjutkan eksekusi pipeline ke tahap Deploy atau "Abort" untuk menghentikan eksekusi pipeline)' 
             unstash(name: 'compiled-results')
             sh "docker run --rm -v ${env.WORKSPACE}/${env.BUILD_ID}/sources:/src cdrx/pyinstaller-linux:python2 'pyinstaller -F add2vals.py'"
         }
+        sleep time: 1, unit: 'MINUTES'
         archiveArtifacts "${env.BUILD_ID}/sources/dist/add2vals"
         sh "docker run --rm -v ${env.WORKSPACE}/${env.BUILD_ID}/sources:/src cdrx/pyinstaller-linux:python2 'rm -rf build'"
         // sshPublisher(
