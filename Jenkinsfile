@@ -21,10 +21,6 @@ node {
         }
     }
     
-    // stage('Manual Approval') {
-    //     input message: 'Lanjutkan ke tahap Deploy?'
-    // }
-    
     stage('Deliver') {
         try {
             dir("${env.BUILD_ID}") {
@@ -36,7 +32,6 @@ node {
             echo 'Failed'
             throw e
         } finally {
-            sleep time: 1, unit: 'MINUTES'
             archiveArtifacts "${env.BUILD_ID}/sources/dist/add2vals"
             sh "docker run --rm -v ${env.WORKSPACE}/${env.BUILD_ID}/sources:/src cdrx/pyinstaller-linux:python2 'rm -rf build'"
             sshPublisher(
@@ -65,7 +60,7 @@ node {
                     )
                 ]
             )
-            // sleep(60)
+            sleep time: 1, unit: 'MINUTES'
         }
     }
 }
